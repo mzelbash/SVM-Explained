@@ -1658,11 +1658,11 @@ with tabs[4]:
         st.markdown("""
         For SVM, each data point must satisfy:
 
-        **y_i × (w^T x_i + b) ≥ 1**
+        **yᵢ × (wᵀxᵢ + b) ≥ 1**
 
         This means:
-        - **Class +1 points**: w^T x_i + b ≥ +1 (above upper margin)
-        - **Class -1 points**: w^T x_i + b ≤ -1 (below lower margin)
+        - **Class +1 points**: wᵀxᵢ + b ≥ +1 (above upper margin)
+        - **Class -1 points**: wᵀxᵢ + b ≤ -1 (below lower margin)
         - **Support vectors**: Exactly on the margin (= ±1)
         """)
 
@@ -2943,7 +2943,7 @@ with tabs[8]:
     ### 🤔 The Problem
 
     For non-linear data, we need to transform features to higher dimensions:
-    - **Explicit transformation**: Map x → φ(x), then compute φ(x)^T φ(z)
+    - **Explicit transformation**: Map x → φ(x), then compute φ(x)ᵀ φ(z)
     - **Kernel trick**: Compute K(x, z) directly without φ(x)!
 
     Let's see the difference with **real calculations**! 👇
@@ -3099,11 +3099,11 @@ with tabs[8]:
         <div class='formula-box'>
         <b>Step-by-Step:</b><br><br>
 
-        1. x^T z = {x1_k}×{z1_k} + {x2_k}×{z2_k}<br>
+        1. x<sup>T</sup> z = {x1_k}×{z1_k} + {x2_k}×{z2_k}<br>
         &nbsp;&nbsp;&nbsp;= {x1_k*z1_k:.2f} + {x2_k*z2_k:.2f}<br>
         &nbsp;&nbsp;&nbsp;= {x_dot_z:.2f}<br><br>
 
-        2. (x^T z + 1)² = ({x_dot_z:.2f} + 1)²<br>
+        2. (x<sup>T</sup> z + 1)² = ({x_dot_z:.2f} + 1)²<br>
         &nbsp;&nbsp;&nbsp;= {x_dot_z + 1:.2f}²<br>
         &nbsp;&nbsp;&nbsp;= <b>{kernel_result:.4f}</b>
         </div>
@@ -3113,7 +3113,7 @@ with tabs[8]:
         st.markdown(f"""
         <div class='example-box'>
         <b>Computational Cost:</b><br>
-        • Dot product x^T z: <b>2 multiplications + 1 addition</b><br>
+        • Dot product x<sup>T</sup> z: <b>2 multiplications + 1 addition</b><br>
         • Add 1: <b>1 addition</b><br>
         • Square: <b>1 multiplication</b><br>
         • <b>Total: ~5 operations</b>
