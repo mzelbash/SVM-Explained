@@ -1,19 +1,19 @@
-# 🎯 Support Vector Machine (SVM) Interactive Demo
+# Support Vector Machine (SVM) Interactive Demo
 ## SEAS-8505 | Dr. Elbasheer | 1/17/2026
 
 A modern, interactive Streamlit application designed to teach Support Vector Machine concepts through beautiful visualizations, hands-on exploration, and simple numerical examples.
 
-## ✨ Features
+## Features
 
-### 🎨 Modern & Responsive Design
+### Modern & Responsive Design
 - Beautiful gradient color scheme (purple/blue theme)
 - Smooth animations and transitions
 - Modern slider controls with hover effects
 - Responsive layout that works on different screen sizes
 
-### 📚 Eleven Interactive Sections:
+### Eleven Interactive Sections:
 
-0. **🎓 Start Here: Vectors** ⭐ - **Foundation concepts**
+0. ** Start Here: Vectors** ⭐ - **Foundation concepts**
    - What is a vector? (direction + magnitude)
    - Understanding ||w|| (length/norm)
    - Direction vs Distance: When we divide by ||w||
@@ -22,14 +22,14 @@ A modern, interactive Streamlit application designed to teach Support Vector Mac
    - Why SVM minimizes ||w|| based on constraints
    - Interactive vector visualization
    - All the geometry fundamentals explained!
-1. **📖 SVM Basics** - Introduction to hyperplanes, support vectors, and margins with visual examples
+1. ** SVM Basics** - Introduction to hyperplanes, support vectors, and margins with visual examples
 2. **Interactive SVM Playground** - Real-time adjustments with modern sliders and instant visual feedback
-3. **🧮 Simple Numerical Example** - Step-by-step calculations with real numbers
+3. ** Simple Numerical Example** - Step-by-step calculations with real numbers
    - Interactive sliders for w₁, w₂, and bias b
    - Test points with detailed calculations
    - Visual representation of decision function
    - Sample points table
-4. **🔍 Constraints & Formulation** - Interactive walkthrough of SVM optimization
+4. ** Constraints & Formulation** - Interactive walkthrough of SVM optimization
    - Understand each constraint: yᵢ(wᵀxᵢ + b) ≥ 1
    - See which points satisfy/violate constraints in real-time
    - Visualize slack variables (ξᵢ) for constraint violations
@@ -37,7 +37,7 @@ A modern, interactive Streamlit application designed to teach Support Vector Mac
    - Interactive challenge: optimize the SVM yourself!
    - Compare with automated SVM solution
 5. **Optimization** - Understand what SVM optimizes and the effect of the C parameter
-6. **📊 Predictions (ENHANCED!)** ⭐ - Interactive prediction calculator
+6. **Predictions (ENHANCED!)** ⭐ - Interactive prediction calculator
    - **SVM parameters displayed prominently**: w and b values shown clearly
    - **Step-by-step score calculation**:
      - Step 1: w₁ × x₁
@@ -48,21 +48,21 @@ A modern, interactive Streamlit application designed to teach Support Vector Mac
    - **Interactive help widgets**: Click for detailed explanations
    - Enter any point and see calculation breakdown
    - Visual heatmap with your test points
-7. **🔄 Nonlinear & Kernels** ⭐ NEW! - When linear SVM fails
+7. ** Nonlinear & Kernels** ⭐ NEW! - When linear SVM fails
    - See circular data that linear SVM cannot classify
    - Understand transformation to higher dimensions
    - Learn how kernel functions solve the problem
    - Compare Linear vs RBF kernel on non-linear data
    - Interactive accuracy comparison
-8. **⚡ Kernel Trick Deep Dive** - See the magic behind kernels!
+8. ** Kernel Trick Deep Dive** - See the magic behind kernels!
    - Compare explicit feature transformation vs kernel trick
    - Real calculations with actual numbers
    - See computational cost difference (17 ops vs 5 ops!)
    - Polynomial kernel example with step-by-step math
    - Comparison table showing speedup for higher dimensions
    - RBF kernel (infinite dimensions!) explained
-9. **🌟 Kernel Gallery** - Explore non-linear classification with different kernels
-10. **📈 Probability Estimation** ⭐ NEW! - From scores to probabilities
+9. ** Kernel Gallery** - Explore non-linear classification with different kernels
+10. ** Probability Estimation** ⭐ NEW! - From scores to probabilities
     - Learn Platt scaling technique
     - Interactive sigmoid curve visualization
     - Adjust A and B parameters and see effects
@@ -71,14 +71,14 @@ A modern, interactive Streamlit application designed to teach Support Vector Mac
     - When to use probabilities vs raw scores
     - Real-world medical diagnosis example
 
-## 🚀 Installation
+## Installation
 
 1. Install the required dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-## ▶️ Running the Application
+## Running the Application
 
 Run the Streamlit app with:
 ```bash
@@ -87,14 +87,14 @@ streamlit run svm_demo.py
 
 The application will open in your default web browser (usually at http://localhost:8501)
 
-## 🎮 How to Use
+## How to Use
 
-### 📚 SVM Basics Tab
+### SVM Basics Tab
 - Learn fundamental concepts with interactive visualizations
 - See support vectors, decision boundaries, and margins
 - Understand the key components of SVM
 
-### 🎨 Interactive SVM Playground
+### Interactive SVM Playground
 - **Modern Sliders**: Smooth, responsive controls with hover effects
 - Adjust the number of samples (10-100)
 - Change dataset types (linearly separable, noisy, overlapping)
@@ -106,7 +106,7 @@ The application will open in your default web browser (usually at http://localho
 - 🎲 Generate new random datasets with a button
 - See real-time metrics: ||w||, margin width, support vectors count, accuracy
 
-### 🧮 Simple Numerical Example (NEW!)
+### Simple Numerical Example (NEW!)
 **Perfect for understanding the math step-by-step:**
 - Interactive sliders to set w₁, w₂, and bias b
 - Test any point and see detailed calculations:
@@ -118,20 +118,20 @@ The application will open in your default web browser (usually at http://localho
 - Heatmap showing decision function values
 - Sample points table for quick testing
 
-### ⚙️ Optimization Section
+### Optimization Section
 - See how different C values affect the decision boundary
 - Understand the trade-off between margin size and misclassification
 - Interactive slider to adjust ||w|| and see margin changes
 - Visual feedback on margin validity
 
-### 🎯 Predictions Section
+### Predictions Section
 - Decision function heatmap showing confidence scores
 - Add custom test points with coordinates
 - See calculations for each test point
 - Understand geometric interpretation
 - Interactive point testing
 
-### 🔬 Constraints & Formulation Section (NEW!)
+### Constraints & Formulation Section (NEW!)
 - **Learn the math interactively**:
   - Adjust w and b with sliders
   - See constraint values for each data point
@@ -147,7 +147,7 @@ The application will open in your default web browser (usually at http://localho
   - How slack variables work
   - What SVM actually optimizes
 
-### ⚡ Kernel Trick Deep Dive Section (NEW!)
+### Kernel Trick Deep Dive Section (NEW!)
 - **See the computational difference**:
   - Input two points: x and z
   - Method 1: Explicit transformation (slow)
@@ -166,7 +166,7 @@ The application will open in your default web browser (usually at http://localho
   - But computes in just ~5 operations
   - See actual calculation with your numbers
 
-### 🔮 Kernel Gallery Section
+### Kernel Gallery Section
 - Compare linear vs non-linear kernels
 - Adjust kernel parameters:
   - Polynomial degree (2-5)
@@ -178,7 +178,7 @@ The application will open in your default web browser (usually at http://localho
 - Side-by-side kernel comparison
 - See accuracy metrics for each kernel
 
-## 🎓 Educational Concepts Covered
+## Educational Concepts Covered
 
 - **Hyperplanes and Decision Boundaries** - Visual and mathematical understanding
 - **Support Vectors** - Why they're the critical points
@@ -189,7 +189,7 @@ The application will open in your default web browser (usually at http://localho
 - **Kernel Trick** - Linear, Polynomial, and RBF kernels
 - **Non-linear Classification** - When and why to use kernels
 
-## 🎯 Key Improvements
+## Key Improvements
 
 ### Modern Interactive Elements
 - ✨ Gradient backgrounds and smooth transitions
@@ -213,7 +213,7 @@ The application will open in your default web browser (usually at http://localho
 - Help text on complex parameters
 - Professional gradient color scheme
 
-## 💡 Tips for Students
+## Tips for Students
 
 ### Recommended Learning Path:
 
@@ -272,7 +272,7 @@ The application will open in your default web browser (usually at http://localho
     - Understand confidence in predictions
     - See when probabilities are useful
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 - **Streamlit** - Modern web application framework
 - **Plotly** - Interactive, beautiful visualizations
@@ -281,7 +281,7 @@ The application will open in your default web browser (usually at http://localho
 - **Pandas** - Data presentation in tables
 - **Custom CSS** - Modern, responsive styling
 
-## 📖 For Instructors
+## For Instructors
 
 This application is perfect for:
 - Classroom demonstrations
@@ -290,7 +290,7 @@ This application is perfect for:
 - Interactive Q&A sessions
 - Remote learning environments
 
-## 🎨 Design Philosophy
+## Design Philosophy
 
 - **Visual First**: Learn by seeing, not just reading
 - **Interactive**: Touch, adjust, explore
