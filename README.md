@@ -135,7 +135,7 @@ The application will open in your default web browser (usually at http://localho
 - **Learn the math interactively**:
   - Adjust w and b with sliders
   - See constraint values for each data point
-  - Check if constraints are satisfied (✅ or ❌)
+  - Check if constraints are satisfied 
   - Visualize slack variables (ξᵢ)
 - **Understand the optimization problem**:
   - See objective function value in real-time
@@ -306,4 +306,4 @@ Educational use - Free to use and modify for teaching purposes.
 
 **SEAS-8505 | Dr. Elbasheer | 1/17/2026**
 
-*Explore, Learn, and Master Support Vector Machines!* 🎓
+*Explore, Learn, and Master Support Vector Machines!*
