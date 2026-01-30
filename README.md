@@ -100,10 +100,10 @@ The application will open in your default web browser (usually at http://localho
 - Change dataset types (linearly separable, noisy, overlapping)
 - Modify the C parameter with instant visual feedback
 - Toggle visualization options:
-  - 📐 Show weight vector w
-  - 📏 Show margins
-  - ⭐ Highlight support vectors
-- 🎲 Generate new random datasets with a button
+  -  Show weight vector w
+  -  Show margins
+  -  Highlight support vectors
+-  Generate new random datasets with a button
 - See real-time metrics: ||w||, margin width, support vectors count, accuracy
 
 ### Simple Numerical Example (NEW!)
@@ -192,12 +192,12 @@ The application will open in your default web browser (usually at http://localho
 ## Key Improvements
 
 ### Modern Interactive Elements
-- ✨ Gradient backgrounds and smooth transitions
-- 🎨 Enhanced sliders with larger touch targets
-- 📊 Color-coded example boxes for clarity
-- 📝 Formula boxes with monospace fonts
-- 🎪 Animated buttons with hover effects
-- 📱 Responsive design for different screen sizes
+-  Gradient backgrounds and smooth transitions
+-  Enhanced sliders with larger touch targets
+-  Color-coded example boxes for clarity
+-  Formula boxes with monospace fonts
+-  Animated buttons with hover effects
+-  Responsive design for different screen sizes
 
 ### Simple Numerical Examples
 - Step-by-step mathematical calculations
@@ -217,9 +217,9 @@ The application will open in your default web browser (usually at http://localho
 
 ### Recommended Learning Path:
 
-**⭐ IMPORTANT: Start with Tab 0!**
+**⭐ IMPORTANT: Start with !**
 
-0. **Start Here: Vectors** (Tab 0) 🎓 **MUST DO FIRST!**
+0. **Start Here: Vectors**   **MUST DO FIRST!**
    - Understand what vectors are
    - Learn why we divide by ||w||
    - See why w is perpendicular
@@ -236,7 +236,7 @@ The application will open in your default web browser (usually at http://localho
    - See the math with real numbers
    - Calculate f(x) = w^T x + b yourself
 
-3. **Understand Constraints** (Tab 4) ⭐ NEW!
+3. **Understand Constraints** (Tab 4)  NEW!
    - This is where SVM "clicks"!
    - See why constraints matter
    - Try to optimize manually
@@ -253,12 +253,12 @@ The application will open in your default web browser (usually at http://localho
    - How SVM makes decisions
    - Decision function scores
 
-7. **Nonlinear Decision Boundaries** (Tab 7) ⭐ NEW!
+7. **Nonlinear Decision Boundaries** (Tab 7)  NEW!
    - See when linear SVM fails
    - Understand why kernels are needed
    - Visual comparison of linear vs RBF
 
-8. **Kernel Trick Deep Dive** (Tab 8) ⭐ NEW!
+8. **Kernel Trick Deep Dive** (Tab 8)  NEW!
    - **Must see!** This explains WHY kernels are magical
    - Compare explicit vs implicit computation
    - Understand computational savings
@@ -267,7 +267,7 @@ The application will open in your default web browser (usually at http://localho
    - Try different kernels on different datasets
    - See which works best where
 
-10. **Probability Estimation** (Tab 10) ⭐ NEW!
+10. **Probability Estimation** (Tab 10)  NEW!
     - Learn Platt scaling for probability estimates
     - Understand confidence in predictions
     - See when probabilities are useful
