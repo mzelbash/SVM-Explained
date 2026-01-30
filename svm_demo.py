@@ -694,95 +694,274 @@ with tabs[0]:
         """, unsafe_allow_html=True)
 
     with col_m2:
-        # Visualize margin changes
-        fig_margin_demo = go.Figure()
+        # Create tabs for 2D and 3D views
+        view_tabs = st.tabs(["📐 2D View", "🎲 3D View"])
 
-        # For visualization, use w = [1, 1] normalized
+        # Common calculations
         w_vis = np.array([1.0, 1.0])
         w_norm_vis = np.linalg.norm(w_vis)
-
-        # Decision boundary: wᵀx = x₁ + x₂ = 0  =>  x₂ = -x₁
-        x_line = np.linspace(-3, 3, 100)
-        y_decision = -x_line
-
-        # For w = [1, 1], the perpendicular offset is along w direction
-        # Margin hyperplanes are at distance 1/||w|| from decision boundary
-        # The offset in coordinate space: (margin/2) * (w / ||w||)
         actual_margin = 2 / w_norm_demo
-        offset_per_margin = (actual_margin / 2) / w_norm_vis  # Distance per margin line
-
-        # Upper margin: shift perpendicular to decision boundary in +w direction
-        # For x₂ = -x₁, shifting by offset along [1,1] direction
-        offset_x = offset_per_margin
-        offset_y = offset_per_margin
-
-        # Three hyperplanes (parallel lines)
-        fig_margin_demo.add_trace(go.Scatter(
-            x=x_line, y=y_decision,
-            mode='lines',
-            line=dict(color='green', width=4),
-            name='Decision (f=0)'
-        ))
-
-        fig_margin_demo.add_trace(go.Scatter(
-            x=x_line + offset_x, y=y_decision + offset_y,
-            mode='lines',
-            line=dict(color='green', width=2, dash='dash'),
-            name=f'Upper (f=+1)'
-        ))
-
-        fig_margin_demo.add_trace(go.Scatter(
-            x=x_line - offset_x, y=y_decision - offset_y,
-            mode='lines',
-            line=dict(color='green', width=2, dash='dash'),
-            name=f'Lower (f=-1)'
-        ))
-
-        # Margin width indicator - PERPENDICULAR to decision boundary
-        # Draw along w direction (perpendicular to hyperplane)
-        center_point = 0  # Center at origin
-        margin_half = actual_margin / 2
-
-        # Direction perpendicular to hyperplane = w/||w|| = [1,1]/sqrt(2) normalized
+        offset_per_margin = (actual_margin / 2) / w_norm_vis
         perp_dir = w_vis / w_norm_vis
 
-        # Draw margin indicator perpendicular to decision boundary
-        start_point = np.array([center_point, -center_point]) - margin_half * perp_dir
-        end_point = np.array([center_point, -center_point]) + margin_half * perp_dir
+        with view_tabs[0]:
+            # 2D View - TILTED with interactive rotation control
+            st.markdown("**🔄 Rotate the view** to see perpendicularity from different angles:")
 
-        fig_margin_demo.add_trace(go.Scatter(
-            x=[start_point[0], end_point[0]],
-            y=[start_point[1], end_point[1]],
-            mode='lines+markers+text',
-            line=dict(color='orange', width=4),
-            marker=dict(size=12, symbol='arrow-bar-up'),
-            text=['', f'Margin = {actual_margin:.2f}'],
-            textposition='top center',
-            textfont=dict(size=14, color='orange'),
-            name=f'Margin width ⊥'
-        ))
+            # Add rotation slider
+            tilt_angle = st.slider(
+                "Rotation angle (degrees)",
+                min_value=-60,
+                max_value=60,
+                value=35,
+                step=5,
+                key="margin_tilt_angle",
+                help="Adjust the tilt angle to view the margin from different perspectives"
+            )
 
-        # Add w vector to show perpendicular direction
-        fig_margin_demo.add_trace(go.Scatter(
-            x=[0, perp_dir[0]*1.5],
-            y=[0, perp_dir[1]*1.5],
-            mode='lines+markers',
-            line=dict(color='purple', width=2, dash='dot'),
-            marker=dict(size=8, symbol='arrow'),
-            name='w direction ⊥'
-        ))
+            fig_margin_demo = go.Figure()
 
-        fig_margin_demo.update_layout(
-            title=f"Margin Width = {margin_demo:.2f} (||w|| = {w_norm_demo:.2f})",
-            xaxis_title="x₁",
-            yaxis_title="x₂",
-            height=400,
-            plot_bgcolor='#f8f9fa',
-            xaxis=dict(range=[-3, 3], gridcolor='lightgray', zeroline=True),
-            yaxis=dict(range=[-3, 3], gridcolor='lightgray', zeroline=True)
-        )
+            # Convert angle to radians
+            theta = np.radians(tilt_angle)
 
-        st.plotly_chart(fig_margin_demo, use_container_width=True)
+            # Direction along the decision boundary
+            dir_x = np.cos(theta)
+            dir_y = np.sin(theta)
+
+            # Perpendicular direction (rotated 90 degrees)
+            perp_x = -np.sin(theta)
+            perp_y = np.cos(theta)
+
+            # Generate points along the decision boundary
+            t_vals = np.linspace(-3, 3, 100)
+            x_decision = t_vals * dir_x
+            y_decision = t_vals * dir_y
+
+            # Margin offset in perpendicular direction
+            margin_offset = actual_margin / 2
+            offset_x = margin_offset * perp_x
+            offset_y = margin_offset * perp_y
+
+            # Three parallel hyperplanes
+            fig_margin_demo.add_trace(go.Scatter(
+                x=x_decision, y=y_decision,
+                mode='lines',
+                line=dict(color='green', width=5),
+                name='Decision boundary (f=0)',
+                hovertemplate='Decision boundary<br>f(x) = 0<extra></extra>'
+            ))
+
+            fig_margin_demo.add_trace(go.Scatter(
+                x=x_decision + offset_x, y=y_decision + offset_y,
+                mode='lines',
+                line=dict(color='green', width=3, dash='dash'),
+                name=f'Upper margin (f=+1)',
+                hovertemplate='Upper margin<br>f(x) = +1<extra></extra>'
+            ))
+
+            fig_margin_demo.add_trace(go.Scatter(
+                x=x_decision - offset_x, y=y_decision - offset_y,
+                mode='lines',
+                line=dict(color='green', width=3, dash='dash'),
+                name=f'Lower margin (f=-1)',
+                hovertemplate='Lower margin<br>f(x) = -1<extra></extra>'
+            ))
+
+            # Perpendicular margin indicator at center
+            margin_center = 0  # t=0 on the decision boundary
+
+            fig_margin_demo.add_trace(go.Scatter(
+                x=[margin_center - offset_x, margin_center + offset_x],
+                y=[margin_center - offset_y, margin_center + offset_y],
+                mode='lines+markers',
+                line=dict(color='orange', width=6),
+                marker=dict(size=14, symbol='arrow-bar-up', color='orange'),
+                name=f'Margin = {actual_margin:.2f}',
+                hovertemplate=f'Margin width<br>{actual_margin:.2f} ⊥<extra></extra>'
+            ))
+
+            # Add annotation for margin measurement
+            fig_margin_demo.add_annotation(
+                x=offset_x * 1.5,
+                y=offset_y * 1.5,
+                text=f"<b>Margin = {actual_margin:.2f}</b><br>⊥ Perpendicular",
+                showarrow=True,
+                arrowhead=2,
+                arrowcolor='orange',
+                arrowwidth=3,
+                ax=60,
+                ay=-40,
+                font=dict(size=14, color='orange', family='Arial Black'),
+                bgcolor='rgba(255,255,255,0.9)',
+                bordercolor='orange',
+                borderwidth=2,
+                borderpad=8
+            )
+
+            # Add w vector in perpendicular direction
+            w_start_x = 1.5 * dir_x
+            w_start_y = 1.5 * dir_y
+            w_end_x = w_start_x + 1.2 * perp_x
+            w_end_y = w_start_y + 1.2 * perp_y
+
+            fig_margin_demo.add_trace(go.Scatter(
+                x=[w_start_x, w_end_x],
+                y=[w_start_y, w_end_y],
+                mode='lines+markers+text',
+                line=dict(color='purple', width=3, dash='dot'),
+                marker=dict(size=12, symbol='arrow', angleref='previous', color='purple'),
+                text=['', 'w ⊥'],
+                textposition='top center',
+                textfont=dict(size=14, color='purple'),
+                name='w direction',
+                hovertemplate='w vector<br>Perpendicular to hyperplane<extra></extra>'
+            ))
+
+            # Add shaded regions to show the two classes (aligned with tilted view)
+            # Create polygon vertices for upper region
+            far_left = -3.5 * dir_x
+            far_left_y = -3.5 * dir_y
+            far_right = 3.5 * dir_x
+            far_right_y = 3.5 * dir_y
+
+            # Upper region (positive class)
+            fig_margin_demo.add_trace(go.Scatter(
+                x=[far_left + offset_x, far_right + offset_x, far_right + 3*perp_x, far_left + 3*perp_x, far_left + offset_x],
+                y=[far_left_y + offset_y, far_right_y + offset_y, far_right_y + 3*perp_y, far_left_y + 3*perp_y, far_left_y + offset_y],
+                fill='toself',
+                fillcolor='rgba(102,126,234,0.15)',
+                line=dict(width=0),
+                name='Class +1 region',
+                showlegend=False,
+                hoverinfo='skip'
+            ))
+
+            # Lower region (negative class)
+            fig_margin_demo.add_trace(go.Scatter(
+                x=[far_left - offset_x, far_right - offset_x, far_right - 3*perp_x, far_left - 3*perp_x, far_left - offset_x],
+                y=[far_left_y - offset_y, far_right_y - offset_y, far_right_y - 3*perp_y, far_left_y - 3*perp_y, far_left_y - offset_y],
+                fill='toself',
+                fillcolor='rgba(245,101,101,0.15)',
+                line=dict(width=0),
+                name='Class -1 region',
+                showlegend=False,
+                hoverinfo='skip'
+            ))
+
+            fig_margin_demo.update_layout(
+                title=f"<b>Margin Visualization (Angle: {tilt_angle}°)</b><br>Margin = {actual_margin:.2f} | ||w|| = {w_norm_demo:.2f}",
+                xaxis_title="Feature space",
+                yaxis_title="Feature space",
+                height=550,
+                plot_bgcolor='white',
+                xaxis=dict(range=[-3, 3], gridcolor='lightgray', zeroline=True, showgrid=True),
+                yaxis=dict(range=[-3, 3], gridcolor='lightgray', zeroline=True, showgrid=True, scaleanchor='x', scaleratio=1),
+                showlegend=True,
+                legend=dict(x=0.02, y=0.98, bgcolor='rgba(255,255,255,0.9)')
+            )
+
+            st.plotly_chart(fig_margin_demo, use_container_width=True)
+
+            st.success(f"""
+             **At {tilt_angle}° tilt!**
+            - Margin = orange arrow (**always perpendicular** at 90°)
+            - Purple w vector shows the perpendicular direction
+            - Use slider above to rotate and view from different angles!
+            """)
+
+        with view_tabs[1]:
+            # 3D visualization showing hyperplanes in 3D
+            st.markdown("""
+            ### 🎲 3D visualization: See the parallel hyperplanes
+
+            This shows the three parallel hyperplanes in 3D space, making it clear they're separated
+            by the margin distance **perpendicular** to their surfaces.
+            """)
+
+            fig_3d = go.Figure()
+
+            # Create meshgrid for hyperplanes
+            x1_range = np.linspace(-2, 2, 30)
+            x2_range = np.linspace(-2, 2, 30)
+            X1, X2 = np.meshgrid(x1_range, x2_range)
+
+            # For w = [1, 1], b = 0: decision boundary is x₁ + x₂ = 0
+            # Solve for x₃ dimension (we'll use f(x) as the third dimension)
+            # Decision boundary plane: f(x) = 0
+            Z_decision = np.zeros_like(X1)
+
+            # Upper margin plane: f(x) = +1
+            Z_upper = np.ones_like(X1)
+
+            # Lower margin plane: f(x) = -1
+            Z_lower = -np.ones_like(X1)
+
+            # Plot three parallel planes
+            fig_3d.add_trace(go.Surface(
+                x=X1, y=X2, z=Z_decision,
+                colorscale=[[0, 'green'], [1, 'green']],
+                opacity=0.7,
+                name='Decision (f=0)',
+                showscale=False,
+                hovertemplate='x₁: %{x:.2f}<br>x₂: %{y:.2f}<br>f(x): %{z}<extra></extra>'
+            ))
+
+            fig_3d.add_trace(go.Surface(
+                x=X1, y=X2, z=Z_upper,
+                colorscale=[[0, 'lightgreen'], [1, 'lightgreen']],
+                opacity=0.5,
+                name='Upper (f=+1)',
+                showscale=False,
+                hovertemplate='x₁: %{x:.2f}<br>x₂: %{y:.2f}<br>f(x): %{z}<extra></extra>'
+            ))
+
+            fig_3d.add_trace(go.Surface(
+                x=X1, y=X2, z=Z_lower,
+                colorscale=[[0, 'lightgreen'], [1, 'lightgreen']],
+                opacity=0.5,
+                name='Lower (f=-1)',
+                showscale=False,
+                hovertemplate='x₁: %{x:.2f}<br>x₂: %{y:.2f}<br>f(x): %{z}<extra></extra>'
+            ))
+
+            # Add perpendicular line showing margin distance
+            # The actual margin in this coordinate system
+            margin_3d = actual_margin / np.sqrt(2)  # Scaled for visualization
+
+            fig_3d.add_trace(go.Scatter3d(
+                x=[0, 0],
+                y=[0, 0],
+                z=[-1, 1],
+                mode='lines+markers+text',
+                line=dict(color='orange', width=8),
+                marker=dict(size=8),
+                text=['f=-1', 'f=+1'],
+                textposition='middle center',
+                name=f'Margin distance ⊥'
+            ))
+
+            fig_3d.update_layout(
+                title=f"3D View: Parallel hyperplanes | Margin = {actual_margin:.2f}",
+                scene=dict(
+                    xaxis_title="x₁",
+                    yaxis_title="x₂",
+                    zaxis_title="f(x) value",
+                    camera=dict(eye=dict(x=1.5, y=1.5, z=1.3)),
+                    aspectmode='cube'
+                ),
+                height=500,
+                showlegend=True
+            )
+
+            st.plotly_chart(fig_3d, use_container_width=True)
+
+            st.success("""
+            ✓ **In 3D you can clearly see:**
+            - Three **parallel** planes (decision boundary and two margins)
+            - Margin distance measured **perpendicular** between planes
+            - Larger ||w|| → planes closer together (smaller margin)
+            - Smaller ||w|| → planes farther apart (larger margin)
+            """)
 
         if w_norm_demo < 1.0:
             st.success("🎉 Small ||w|| = Large margin! SVM wants to minimize ||w||!")
