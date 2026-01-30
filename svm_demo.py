@@ -697,16 +697,26 @@ with tabs[0]:
         # Visualize margin changes
         fig_margin_demo = go.Figure()
 
-        # For visualization, use w = [1, 1] and scale it
-        w_vis = np.array([1.0, 1.0]) * w_norm_demo / np.sqrt(2)
+        # For visualization, use w = [1, 1] normalized
+        w_vis = np.array([1.0, 1.0])
+        w_norm_vis = np.linalg.norm(w_vis)
 
+        # Decision boundary: wᵀx = x₁ + x₂ = 0  =>  x₂ = -x₁
         x_line = np.linspace(-3, 3, 100)
-        y_decision = -x_line  # Decision boundary
+        y_decision = -x_line
 
-        # Margin offset
-        margin_offset = margin_demo / 2 * np.sqrt(2)
+        # For w = [1, 1], the perpendicular offset is along w direction
+        # Margin hyperplanes are at distance 1/||w|| from decision boundary
+        # The offset in coordinate space: (margin/2) * (w / ||w||)
+        actual_margin = 2 / w_norm_demo
+        offset_per_margin = (actual_margin / 2) / w_norm_vis  # Distance per margin line
 
-        # Three hyperplanes
+        # Upper margin: shift perpendicular to decision boundary in +w direction
+        # For x₂ = -x₁, shifting by offset along [1,1] direction
+        offset_x = offset_per_margin
+        offset_y = offset_per_margin
+
+        # Three hyperplanes (parallel lines)
         fig_margin_demo.add_trace(go.Scatter(
             x=x_line, y=y_decision,
             mode='lines',
@@ -715,27 +725,51 @@ with tabs[0]:
         ))
 
         fig_margin_demo.add_trace(go.Scatter(
-            x=x_line, y=y_decision + margin_offset,
+            x=x_line + offset_x, y=y_decision + offset_y,
             mode='lines',
             line=dict(color='green', width=2, dash='dash'),
             name=f'Upper (f=+1)'
         ))
 
         fig_margin_demo.add_trace(go.Scatter(
-            x=x_line, y=y_decision - margin_offset,
+            x=x_line - offset_x, y=y_decision - offset_y,
             mode='lines',
             line=dict(color='green', width=2, dash='dash'),
             name=f'Lower (f=-1)'
         ))
 
-        # Margin width indicator
+        # Margin width indicator - PERPENDICULAR to decision boundary
+        # Draw along w direction (perpendicular to hyperplane)
+        center_point = 0  # Center at origin
+        margin_half = actual_margin / 2
+
+        # Direction perpendicular to hyperplane = w/||w|| = [1,1]/sqrt(2) normalized
+        perp_dir = w_vis / w_norm_vis
+
+        # Draw margin indicator perpendicular to decision boundary
+        start_point = np.array([center_point, -center_point]) - margin_half * perp_dir
+        end_point = np.array([center_point, -center_point]) + margin_half * perp_dir
+
         fig_margin_demo.add_trace(go.Scatter(
-            x=[0, 0],
-            y=[y_decision[50] - margin_offset, y_decision[50] + margin_offset],
+            x=[start_point[0], end_point[0]],
+            y=[start_point[1], end_point[1]],
+            mode='lines+markers+text',
+            line=dict(color='orange', width=4),
+            marker=dict(size=12, symbol='arrow-bar-up'),
+            text=['', f'Margin = {actual_margin:.2f}'],
+            textposition='top center',
+            textfont=dict(size=14, color='orange'),
+            name=f'Margin width ⊥'
+        ))
+
+        # Add w vector to show perpendicular direction
+        fig_margin_demo.add_trace(go.Scatter(
+            x=[0, perp_dir[0]*1.5],
+            y=[0, perp_dir[1]*1.5],
             mode='lines+markers',
-            line=dict(color='orange', width=3),
-            marker=dict(size=10),
-            name=f'Margin = {margin_demo:.2f}'
+            line=dict(color='purple', width=2, dash='dot'),
+            marker=dict(size=8, symbol='arrow'),
+            name='w direction ⊥'
         ))
 
         fig_margin_demo.update_layout(
