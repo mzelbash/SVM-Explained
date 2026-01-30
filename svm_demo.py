@@ -439,7 +439,7 @@ with tabs[0]:
 
         with st.expander("❓ Help: Why are margins at +1 and -1?"):
             st.markdown("""
-            **Great question!** This seems arbitrary, but it's a smart choice:
+            **hmmm!** This seems arbitrary, but it's a smart choice:
 
             **Why +1 and -1?**
             - We can always scale w and b to make the margins ±1
