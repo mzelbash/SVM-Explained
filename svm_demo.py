@@ -189,7 +189,7 @@ st.markdown("""
     border-radius: 15px; margin-bottom: 30px; color: white; box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);'>
         <h1 style='color: white; -webkit-text-fill-color: white; margin: 0; font-size: 2.5rem;'>Support Vector Machine Interactive Demo</h1>
         <h3 style='color: white; margin: 10px 0; font-weight: 400;'>SEAS-8505 | Dr. Elbasheer | 1/17/2026</h3>
-        <p style='font-size: 1.1rem; margin: 10px 0; opacity: 0.95;'>Learn SVM through Interactive Visualizations & Real Examples</p>
+        <p style='font-size: 1.1rem; margin: 10px 0; opacity: 0.95;'>Learn SVM through Interactive Visualizations & Examples</p>
     </div>
     """, unsafe_allow_html=True)
 
