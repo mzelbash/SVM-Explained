@@ -193,17 +193,17 @@ st.markdown("""
     </div>
     """, unsafe_allow_html=True)
 
-tabs = st.tabs(["🎓 Start Here: Vectors", "📖 SVM Basics", "Interactive SVM", "🧮 Simple Example", "🔍 Constraints & Formulation", "Optimization", "📊 Predictions", "🔄 Nonlinear & Kernels", "⚡ Kernel Deep Dive", "🌟 Kernel Gallery", "📈 Probability Estimation"])
+tabs = st.tabs(["🎓 Start here: Vectors", "📖 SVM basics", "Interactive SVM", "🧮 Simple example", "🔍 Constraints & formulation", "Optimization", "📊 Predictions", "🔄 Nonlinear & kernels", "⚡ Kernel deep dive", "🌟 Kernel gallery", "📈 Probability estimation"])
 
 # Tab 0: Vector Fundamentals - START HERE!
 with tabs[0]:
-    st.header("🎓 Start Here: Understanding Vectors & Geometry")
+    st.header("🎓 Start here: Understanding vectors & geometry")
     st.markdown("**Foundation concepts you need before diving into SVM!**")
 
     st.info("ℹ️ **Students: Start here!** This tab explains the fundamental vector concepts that make SVM work. Understanding these will make everything else crystal clear!")
 
     # Part 1: What is a vector?
-    st.markdown("### Part 1: What is a Vector?")
+    st.markdown("### Part 1: What is a vector?")
 
     col_v1, col_v2 = st.columns([1, 1])
 
@@ -315,7 +315,7 @@ with tabs[0]:
     st.markdown("---")
 
     # Part 2: Normalization - Direction vs Distance
-    st.markdown("### Part 2: Direction vs Distance - Why Divide by ||w||?")
+    st.markdown("### Part 2: Direction vs distance - Why divide by ||w||?")
 
     col_n1, col_n2 = st.columns([1, 1])
 
@@ -399,7 +399,7 @@ with tabs[0]:
     st.markdown("---")
 
     # Part 3: Hyperplane and Margins
-    st.markdown("### Part 3: Decision Hyperplane & Margins")
+    st.markdown("### Part 3: Decision hyperplane & margins")
 
     st.markdown("""
     In SVM, we have **three parallel hyperplanes**:
@@ -536,7 +536,7 @@ with tabs[0]:
     st.markdown("---")
 
     # Part 4: Why w is perpendicular
-    st.markdown("### Part 4: Understanding Perpendicularity")
+    st.markdown("### Part 4: Understanding perpendicularity")
 
     col_p1, col_p2 = st.columns([1, 1])
 
@@ -630,7 +630,7 @@ with tabs[0]:
     st.markdown("---")
 
     # Part 5: Why minimize ||w||
-    st.markdown("### Part 5: The Optimization Goal")
+    st.markdown("### Part 5: The optimization goal")
 
     col_m1, col_m2 = st.columns([1, 1])
 
@@ -799,7 +799,7 @@ with tabs[0]:
 
 # Tab 1: SVM Basics
 with tabs[1]:
-    st.header("Understanding SVM Fundamentals")
+    st.header("Understanding SVM fundamentals")
 
     col1, col2 = st.columns([1, 1])
 
@@ -936,7 +936,7 @@ with tabs[1]:
 
 # Tab 2: Interactive SVM
 with tabs[2]:
-    st.header("🎨 Interactive SVM Playground")
+    st.header("🎨 Interactive SVM playground")
     st.markdown("**Adjust the controls below and see the SVM update in real-time!**")
 
     st.info("""
@@ -990,7 +990,7 @@ with tabs[2]:
             st.error(f"🔴 **C = {C_param}**: Very strict - minimal violations, smallest margin")
 
         st.markdown("---")
-        st.subheader("👁️ Visualization Options")
+        st.subheader("👁️ Visualization options")
 
         show_vectors = st.checkbox(
             "📐 Show weight vector w",
@@ -1276,7 +1276,7 @@ with tabs[2]:
             model_state = "🔴 Very Strict (No violations - may overfit!)"
             state_color = "red"
 
-        st.markdown(f"### 📊 Model Performance: {model_state}")
+        st.markdown(f"### 📊 Model performance: {model_state}")
 
         col_a, col_b, col_c, col_d, col_e, col_f = st.columns(6)
         with col_a:
@@ -1343,7 +1343,7 @@ with tabs[2]:
         # Show support vector analysis
         if show_support and len(clf_interactive.support_vectors_) > 0:
             st.markdown("---")
-            st.markdown("### 🔍 Support Vector Analysis")
+            st.markdown("### 🔍 Support vector analysis")
 
             # Categorize support vectors
             sv = clf_interactive.support_vectors_
@@ -1378,14 +1378,14 @@ with tabs[2]:
 
 # Tab 3: Simple Numerical Example
 with tabs[3]:
-    st.header("🧮 Simple Numerical Example")
+    st.header("🧮 Simple numerical example")
     st.markdown("**Let's work through a concrete example with real numbers!**")
 
     col1, col2 = st.columns([1, 1])
 
     with col1:
         st.markdown("""
-        ### Step-by-Step Example
+        ### Step-by-step example
 
         Let's say we have a simple SVM with:
         """)
@@ -1404,7 +1404,7 @@ with tabs[3]:
         """, unsafe_allow_html=True)
 
         st.markdown("---")
-        st.subheader("Test a Point")
+        st.subheader("Test a point")
 
         x1_test = st.slider("Test point x₁", -5.0, 5.0, 3.0, 0.5)
         x2_test = st.slider("Test point x₂", -5.0, 5.0, 2.0, 0.5)
@@ -1569,11 +1569,11 @@ with tabs[3]:
 
 # Tab 4: Constraints & Formulation - NEW!
 with tabs[4]:
-    st.header("🔬 SVM Formulation & Constraints: Step-by-Step")
+    st.header("🔬 SVM formulation & constraints: Step-by-step")
     st.markdown("**Let's build the SVM optimization problem from scratch!**")
 
     st.markdown("""
-    ### 📖 The Story of SVM
+    ### 📖 The story of SVM
 
     Imagine you have data points from two classes, and you want to draw a line (hyperplane) that:
     1. **Separates** the two classes
@@ -1594,7 +1594,7 @@ with tabs[4]:
     col1, col2 = st.columns([1, 1])
 
     with col1:
-        st.markdown("### 🎛️ Design Your Hyperplane")
+        st.markdown("### 🎛️ Design your hyperplane")
 
         st.markdown("""
         A hyperplane is defined by: **wᵀx + b = 0**
@@ -1740,7 +1740,7 @@ with tabs[4]:
     st.markdown("---")
 
     # Optimization objective
-    st.subheader("The Complete Optimization Problem")
+    st.subheader("The complete optimization problem")
 
     col_a, col_b = st.columns(2)
 
@@ -1778,7 +1778,7 @@ with tabs[4]:
 
     with col_b:
         st.markdown("""
-        ### Subject to Constraints:
+        ### Subject to constraints:
         """)
 
         st.latex(r"""
@@ -1804,7 +1804,7 @@ with tabs[4]:
     st.markdown("---")
 
     # Interactive optimization demonstration
-    st.subheader("🔄 Try to Optimize!")
+    st.subheader("🔄 Try to optimize!")
 
     col_opt1, col_opt2 = st.columns([1, 1])
 
@@ -1852,7 +1852,7 @@ with tabs[4]:
 
 # Tab 5: Optimization (renumbered)
 with tabs[5]:
-    st.header("⚙️ What is SVM Optimizing?")
+    st.header("What is SVM optimizing?")
 
     st.markdown("""
     ### The SVM Optimization Problem
@@ -1881,7 +1881,7 @@ with tabs[5]:
     col1, col2 = st.columns(2)
 
     with col1:
-        st.subheader("⚖️ Effect of C Parameter")
+        st.subheader("⚖️ Effect of C parameter")
 
         C_demo = st.select_slider(
             "Select C value",
@@ -2012,13 +2012,13 @@ with tabs[5]:
     st.markdown("---")
 
     # Visualization of margin maximization
-    st.subheader("📏 Understanding Margin Maximization")
+    st.subheader("📏 Understanding margin maximization")
 
     col_a, col_b = st.columns(2)
 
     with col_a:
         st.markdown("""
-        ### Why maximize margin?
+        ### Why maximize the margin?
 
         The margin is the distance from the decision boundary to the nearest data point.
         """)
@@ -2112,7 +2112,7 @@ with tabs[5]:
 
 # Tab 6: Predictions
 with tabs[6]:
-    st.header("How SVM Makes Predictions")
+    st.header("How SVM makes predictions")
 
     st.markdown("""
     ### The Decision Function
@@ -2152,7 +2152,7 @@ with tabs[6]:
 
     # Display SVM parameters prominently
     st.markdown("---")
-    st.subheader("📋 Trained SVM Parameters")
+    st.subheader("📋 Trained SVM parameters")
 
     col_params1, col_params2, col_params3 = st.columns(3)
 
@@ -2204,7 +2204,7 @@ with tabs[6]:
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        st.subheader("🧮 Calculate Score Step-by-Step")
+        st.subheader("🧮 Calculate score step-by-step")
 
         # Manual point input
         st.markdown("**Enter a test point:**")
@@ -2361,7 +2361,7 @@ with tabs[6]:
 
     # Show predictions table
     if 'test_points' in st.session_state and len(st.session_state.test_points) > 0:
-        st.subheader("📊 Test Point Predictions")
+        st.subheader("📊 Test point predictions")
 
         predictions_data = []
         for i, point in enumerate(st.session_state.test_points, 1):
@@ -2386,7 +2386,7 @@ with tabs[6]:
     st.markdown("---")
 
     # Vector geometry explanation
-    st.subheader("📐 Understanding the Geometry")
+    st.subheader("📐 Understanding the geometry")
 
     col_a, col_b = st.columns(2)
 
@@ -2470,11 +2470,11 @@ with tabs[6]:
 
 # Tab 7: Nonlinear Decision Boundaries & Kernels - NEW!
 with tabs[7]:
-    st.header("Nonlinear Decision Boundaries & Kernel Functions")
+    st.header("Nonlinear decision boundaries & kernel functions")
     st.markdown("**Understanding when and why we need kernels**")
 
     st.markdown("""
-    ### The Limitation of Linear SVM
+    ### The limitation of linear SVM
 
     So far, we've been working with **linear decision boundaries** - straight lines (or hyperplanes) that separate classes.
 
@@ -2533,10 +2533,10 @@ with tabs[7]:
 
     st.markdown("---")
 
-    st.subheader("Solution: Transform to Higher Dimensions")
+    st.subheader("Solution: Transform to higher dimensions")
 
     st.markdown("""
-    ### The Key Insight
+    ### The key insight
 
     **Even if data is not linearly separable in 2D, it might be linearly separable in a higher dimension!**
     """)
@@ -2585,13 +2585,13 @@ with tabs[7]:
 
     st.markdown("---")
 
-    st.subheader("Enter Kernel Functions")
+    st.subheader("Enter kernel functions")
 
     col_kern1, col_kern2 = st.columns([1, 1])
 
     with col_kern1:
         st.markdown("""
-        ### The Problem with Explicit Transformation
+        ### The problem with explicit transformation
 
         Transforming to higher dimensions has issues:
         - **Computational cost**: Many new features to compute
@@ -2606,7 +2606,7 @@ with tabs[7]:
 
     with col_kern2:
         st.markdown("""
-        ### The Kernel Trick Solution
+        ### The kernel trick solution
 
         **Key idea:** We don't actually need φ(x)!
 
@@ -2636,7 +2636,7 @@ with tabs[7]:
 
     st.markdown("---")
 
-    st.subheader("Common Kernels & When to Use Them")
+    st.subheader("Common kernels & when to use them")
 
     st.markdown("""
     <div class='example-box'>
@@ -2662,7 +2662,7 @@ with tabs[7]:
 
     st.markdown("---")
 
-    st.subheader("Interactive: See the Difference")
+    st.subheader("Interactive: See the difference")
 
     kernel_choice = st.selectbox(
         "Choose a kernel to see how it handles circular data",
@@ -2760,7 +2760,7 @@ with tabs[7]:
         # 3D visualization - show how kernel implicitly transforms data
         if "RBF" in kernel_choice:
             st.markdown("""
-            ### 🎲 3D Feature Space Visualization
+            ### 🎲 3D feature space visualization
 
             The RBF kernel **implicitly** maps data to an infinite-dimensional space!
             Here we show a 3D projection where the decision boundary becomes easier to see.
@@ -2881,7 +2881,7 @@ with tabs[7]:
     st.markdown("---")
 
     st.markdown("""
-    ### Key Takeaways
+    ### Key takeaways
 
     **Nonlinear data requires nonlinear decision boundaries:**
     - Linear SVM: Works only for linearly separable data
@@ -2902,7 +2902,7 @@ with tabs[7]:
 
 # Tab 8: Kernel Trick Deep Dive (renumbered)
 with tabs[8]:
-    st.header("⚡ Kernel Trick Deep Dive: Explicit vs Implicit")
+    st.header("⚡ Kernel trick deep dive: Explicit vs implicit")
     st.markdown("**See why the kernel trick is so powerful - with actual computations!**")
 
     st.markdown("""
@@ -2955,7 +2955,7 @@ with tabs[8]:
     st.markdown("---")
 
     # Method 1: Explicit Transformation
-    st.subheader("Method 1: 🐌 Explicit Feature Transformation (Slow Way)")
+    st.subheader("Method 1: 🐌 Explicit feature transformation (slow way)")
 
     col_m1_1, col_m1_2 = st.columns([1, 1])
 
@@ -3040,7 +3040,7 @@ with tabs[8]:
     st.markdown("---")
 
     # Method 2: Kernel Trick
-    st.subheader("Method 2: ⚡ Kernel Trick (Fast Way)")
+    st.subheader("Method 2: ⚡ Kernel trick (fast way)")
 
     col_m2_1, col_m2_2 = st.columns([1, 1])
 
@@ -3111,7 +3111,7 @@ with tabs[8]:
     st.markdown("---")
 
     # Comparison for higher dimensions
-    st.subheader("📊 Why This Matters: Higher Dimensions")
+    st.subheader("📊 Why this matters: Higher dimensions")
 
     col_comp1, col_comp2 = st.columns(2)
 
@@ -3199,7 +3199,7 @@ with tabs[8]:
     st.markdown("---")
 
     # Interactive RBF example
-    st.subheader("🌟 Bonus: RBF Kernel (Infinite Dimensions!)")
+    st.subheader("🌟 Bonus: RBF kernel (infinite dimensions!)")
 
     st.markdown("""
     The **RBF (Radial Basis Function)** kernel maps to **infinite-dimensional** space:
@@ -3246,7 +3246,7 @@ with tabs[8]:
 
 # Tab 9: Kernel Gallery
 with tabs[9]:
-    st.header("Kernel Gallery: Explore Different Kernels")
+    st.header("Kernel gallery: Explore different kernels")
 
     st.markdown("""
     ### Visual Exploration of Kernel Functions
@@ -3260,7 +3260,7 @@ with tabs[9]:
     col1, col2 = st.columns([1, 2])
 
     with col1:
-        st.subheader("🎛️ Kernel Settings")
+        st.subheader("🎛️ Kernel settings")
 
         kernel_type = st.selectbox(
             "Kernel Function",
@@ -3508,10 +3508,10 @@ with tabs[9]:
 
 # Tab 10: Probability Estimation
 with tabs[10]:
-    st.header("Probability Estimation with Platt Scaling")
+    st.header("Probability estimation with Platt scaling")
 
     st.markdown("""
-    ### From Decision Scores to Probabilities
+    ### From decision scores to probabilities
 
     SVMs naturally output **decision scores** f(x), not probabilities. But sometimes we need probability estimates!
     """)
