@@ -939,35 +939,98 @@ with tabs[2]:
     st.header("🎨 Interactive SVM Playground")
     st.markdown("**Adjust the controls below and see the SVM update in real-time!**")
 
+    st.info("""
+    💡 **Pro Tip**: To see the C parameter effect clearly:
+    1. Use **"Overlapping"** dataset (default)
+    2. Change C from **0.01** (very soft) to **100** (very strict)
+    3. Watch **Margin Violations**, **Test Acc**, and the **timestamp** change!
+    """)
+
     col1, col2 = st.columns([1, 2])
 
     with col1:
         st.subheader("🎛️ Controls")
 
-        n_samples = st.slider("📊 Number of samples per class", 10, 100, 30, 5,
-                             help="More samples = more data points to learn from")
+        n_samples = st.slider(
+            "📊 Number of samples per class",
+            min_value=20,
+            max_value=200,
+            value=50,
+            step=10,
+            key="interactive_n_samples",
+            help="More samples = more data points to learn from"
+        )
 
         dataset_type = st.selectbox(
             "📈 Dataset type",
             ["Linearly Separable", "With Noise", "Overlapping"],
+            index=2,  # Default to "Overlapping" to show C effect better
+            key="interactive_dataset_type",
             help="Choose how difficult the classification problem is"
         )
 
-        C_param = st.slider("⚖️ C (Regularization)", 0.01, 100.0, 1.0, 0.01,
-                           help="Smaller C = wider margin, more errors allowed | Larger C = narrower margin, fewer errors",
-                           format="%.2f")
+        # Use select_slider with logarithmic scale for better C control
+        C_options = [0.01, 0.05, 0.1, 0.5, 1.0, 5.0, 10.0, 50.0, 100.0]
+        C_param = st.select_slider(
+            "⚖️ C (Regularization)",
+            options=C_options,
+            value=1.0,
+            key="interactive_C_param",
+            help="Smaller C = wider margin, more errors allowed | Larger C = narrower margin, fewer errors"
+        )
+
+        # Show current C interpretation with exact value
+        if C_param <= 0.1:
+            st.info(f"🔵 **C = {C_param}**: Very soft margin - prioritizes large margin, many violations allowed")
+        elif C_param <= 1.0:
+            st.info(f"🟢 **C = {C_param}**: Balanced - moderate margin with some violations")
+        elif C_param <= 10.0:
+            st.warning(f"🟡 **C = {C_param}**: Stricter - smaller margin, fewer violations")
+        else:
+            st.error(f"🔴 **C = {C_param}**: Very strict - minimal violations, smallest margin")
 
         st.markdown("---")
         st.subheader("👁️ Visualization Options")
 
-        show_vectors = st.checkbox("📐 Show weight vector w", value=True)
-        show_margins = st.checkbox("📏 Show margins", value=True)
-        show_support = st.checkbox("⭐ Highlight support vectors", value=True)
+        show_vectors = st.checkbox(
+            "📐 Show weight vector w",
+            value=True,
+            key="interactive_show_vectors"
+        )
+        show_margins = st.checkbox(
+            "📏 Show margins",
+            value=True,
+            key="interactive_show_margins"
+        )
+        show_support = st.checkbox(
+            "⭐ Highlight support vectors",
+            value=True,
+            key="interactive_show_support"
+        )
 
         st.markdown("---")
 
-        if st.button("🎲 Generate New Random Data", use_container_width=True):
+        if st.button("🎲 Generate New Random Data", key="interactive_generate_data", use_container_width=True):
             st.session_state.random_seed = np.random.randint(0, 1000)
+            st.rerun()
+
+        # Show current settings with update indicator
+        st.markdown("---")
+
+        # Add timestamp to prove updates are happening
+        import datetime
+        update_time = datetime.datetime.now().strftime("%H:%M:%S")
+
+        st.markdown("**📋 Current Settings:**")
+        st.markdown(f"""
+        - Samples per class: **{n_samples}** (Total: {n_samples * 2})
+        - Dataset: **{dataset_type}**
+        - C parameter: **{C_param}**
+        - Random seed: **{st.session_state.get('random_seed', 42)}**
+        - 🔄 Last update: **{update_time}**
+        """)
+
+        st.info("ℹ️ **Watch the timestamp** - it updates every time you change a slider, proving the model is retraining!")
 
     with col2:
         # Generate data based on selection
@@ -975,17 +1038,35 @@ with tabs[2]:
         np.random.seed(seed)
 
         if dataset_type == "Linearly Separable":
+            # Very easy: well separated, small variance
             X_class1 = np.random.randn(n_samples, 2) * 0.5 + np.array([2, 2])
             X_class2 = np.random.randn(n_samples, 2) * 0.5 + np.array([-2, -2])
         elif dataset_type == "With Noise":
+            # Medium: some noise, still mostly separable
             X_class1 = np.random.randn(n_samples, 2) * 1.0 + np.array([2, 2])
             X_class2 = np.random.randn(n_samples, 2) * 1.0 + np.array([-2, -2])
         else:  # Overlapping
-            X_class1 = np.random.randn(n_samples, 2) * 1.5 + np.array([1, 1])
-            X_class2 = np.random.randn(n_samples, 2) * 1.5 + np.array([-1, -1])
+            # Hard: significant overlap, C parameter effect will be very visible!
+            X_class1 = np.random.randn(n_samples, 2) * 2.0 + np.array([1, 1])
+            X_class2 = np.random.randn(n_samples, 2) * 2.0 + np.array([-1, -1])
 
         X_interactive = np.vstack([X_class1, X_class2])
         y_interactive = np.array([1]*n_samples + [-1]*n_samples)
+
+        # Generate small test set (20% of data) for generalization accuracy
+        n_test = max(5, n_samples // 5)  # At least 5 samples per class for test
+        if dataset_type == "Linearly Separable":
+            X_test1 = np.random.randn(n_test, 2) * 0.5 + np.array([2, 2])
+            X_test2 = np.random.randn(n_test, 2) * 0.5 + np.array([-2, -2])
+        elif dataset_type == "With Noise":
+            X_test1 = np.random.randn(n_test, 2) * 1.0 + np.array([2, 2])
+            X_test2 = np.random.randn(n_test, 2) * 1.0 + np.array([-2, -2])
+        else:  # Overlapping
+            X_test1 = np.random.randn(n_test, 2) * 2.0 + np.array([1, 1])
+            X_test2 = np.random.randn(n_test, 2) * 2.0 + np.array([-1, -1])
+
+        X_test = np.vstack([X_test1, X_test2])
+        y_test = np.array([1]*n_test + [-1]*n_test)
 
         # Train SVM
         clf_interactive = SVC(kernel='linear', C=C_param)
@@ -1019,35 +1100,94 @@ with tabs[2]:
             hovertemplate='x: %{x:.2f}<br>y: %{y:.2f}<br>f(x): %{z:.2f}<extra></extra>'
         ))
 
-        # Data points
+        # Training data points
         fig_interactive.add_trace(go.Scatter(
             x=X_class1[:, 0], y=X_class1[:, 1],
             mode='markers',
             marker=dict(size=10, color='#667eea', line=dict(width=2, color='#5a67d8')),
-            name='Class 1'
+            name='Class +1 (train)'
         ))
 
         fig_interactive.add_trace(go.Scatter(
             x=X_class2[:, 0], y=X_class2[:, 1],
             mode='markers',
             marker=dict(size=10, color='#f56565', line=dict(width=2, color='#e53e3e')),
-            name='Class -1'
+            name='Class -1 (train)'
         ))
 
-        # Support vectors
-        if show_support:
-            sv = clf_interactive.support_vectors_
-            fig_interactive.add_trace(go.Scatter(
-                x=sv[:, 0], y=sv[:, 1],
-                mode='markers',
-                marker=dict(size=16, color='#ffd700', symbol='star',
-                           line=dict(width=3, color='#ff8c00')),
-                name='Support Vectors ⭐'
-            ))
+        # Test data points (smaller, semi-transparent)
+        fig_interactive.add_trace(go.Scatter(
+            x=X_test1[:, 0], y=X_test1[:, 1],
+            mode='markers',
+            marker=dict(size=7, color='#667eea', line=dict(width=1, color='#5a67d8'),
+                       opacity=0.6),
+            name='Class +1 (test)'
+        ))
 
-        # Weight vector
+        fig_interactive.add_trace(go.Scatter(
+            x=X_test2[:, 0], y=X_test2[:, 1],
+            mode='markers',
+            marker=dict(size=7, color='#f56565', line=dict(width=1, color='#e53e3e'),
+                       opacity=0.6),
+            name='Class -1 (test)'
+        ))
+
+        # Weight vector and bias (needed for support vector categorization)
         w = clf_interactive.coef_[0]
         b = clf_interactive.intercept_[0]
+
+        # Support vectors - categorize and color-code them
+        if show_support:
+            sv = clf_interactive.support_vectors_
+            sv_indices = clf_interactive.support_
+            sv_labels = y_interactive[sv_indices]
+
+            # Categorize support vectors
+            sv_on_margin_x, sv_on_margin_y = [], []
+            sv_inside_x, sv_inside_y = [], []
+            sv_misclass_x, sv_misclass_y = [], []
+
+            for i, sv_point in enumerate(sv):
+                decision_value = sv_labels[i] * (w @ sv_point + b)
+                if abs(decision_value - 1.0) < 0.01:  # On margin (≈1)
+                    sv_on_margin_x.append(sv_point[0])
+                    sv_on_margin_y.append(sv_point[1])
+                elif decision_value >= 0:  # Inside margin but correct side
+                    sv_inside_x.append(sv_point[0])
+                    sv_inside_y.append(sv_point[1])
+                else:  # Wrong side (misclassified)
+                    sv_misclass_x.append(sv_point[0])
+                    sv_misclass_y.append(sv_point[1])
+
+            # Plot support vectors on margin (gold stars)
+            if sv_on_margin_x:
+                fig_interactive.add_trace(go.Scatter(
+                    x=sv_on_margin_x, y=sv_on_margin_y,
+                    mode='markers',
+                    marker=dict(size=16, color='#ffd700', symbol='star',
+                               line=dict(width=3, color='#ff8c00')),
+                    name='SV: On Margin ⭐'
+                ))
+
+            # Plot support vectors inside margin (orange circles)
+            if sv_inside_x:
+                fig_interactive.add_trace(go.Scatter(
+                    x=sv_inside_x, y=sv_inside_y,
+                    mode='markers',
+                    marker=dict(size=14, color='#ff9800', symbol='circle',
+                               line=dict(width=3, color='#f57c00')),
+                    name='SV: Inside Margin 🔸'
+                ))
+
+            # Plot misclassified support vectors (red X)
+            if sv_misclass_x:
+                fig_interactive.add_trace(go.Scatter(
+                    x=sv_misclass_x, y=sv_misclass_y,
+                    mode='markers',
+                    marker=dict(size=16, color='#ff0000', symbol='x',
+                               line=dict(width=3, color='#cc0000')),
+                    name='SV: Misclassified ✗'
+                ))
 
         if show_vectors:
             # Show w vector from origin
@@ -1092,8 +1232,14 @@ with tabs[2]:
                 name='Lower Margin'
             ))
 
+        # Calculate metrics for title
+        norm_w_title = np.sqrt(np.sum(w ** 2))
+        margin_title = 2 / norm_w_title
+        total_samples = len(X_interactive)
+        test_acc = clf_interactive.score(X_test, y_test) * 100
+
         fig_interactive.update_layout(
-            title="Interactive SVM Visualization",
+            title=f"Interactive SVM | Train: {total_samples}, Test: {len(X_test)} | C = {C_param} | Test Acc = {test_acc:.1f}% | SV = {len(clf_interactive.support_vectors_)}",
             xaxis_title="Feature 1",
             yaxis_title="Feature 2",
             height=600,
@@ -1107,16 +1253,128 @@ with tabs[2]:
         norm_w = np.sqrt(np.sum(w ** 2))
         margin = 1 / norm_w
 
-        col_a, col_b, col_c, col_d = st.columns(4)
+        # Calculate margin violations (points with slack variables)
+        decision_values = clf_interactive.decision_function(X_interactive)
+        margin_violations = np.sum(np.abs(y_interactive * decision_values) < 1)
+        misclassified_train = np.sum(y_interactive * decision_values < 0)
+
+        # Calculate both training and test accuracy
+        train_acc = clf_interactive.score(X_interactive, y_interactive) * 100
+        test_acc_metric = clf_interactive.score(X_test, y_test) * 100
+
+        # Visual indicator of model state based on metrics
+        if margin_violations > len(X_interactive) * 0.3:
+            model_state = "🔵 Very Soft Margin (Many violations)"
+            state_color = "blue"
+        elif margin_violations > len(X_interactive) * 0.1:
+            model_state = "🟢 Balanced (Some violations)"
+            state_color = "green"
+        elif margin_violations > 0:
+            model_state = "🟡 Strict (Few violations)"
+            state_color = "orange"
+        else:
+            model_state = "🔴 Very Strict (No violations - may overfit!)"
+            state_color = "red"
+
+        st.markdown(f"### 📊 Model Performance: {model_state}")
+
+        col_a, col_b, col_c, col_d, col_e, col_f = st.columns(6)
         with col_a:
-            st.metric("||w|| (norm)", f"{norm_w:.3f}", help="Magnitude of weight vector")
+            st.metric("||w||", f"{norm_w:.3f}", help="Magnitude of weight vector")
         with col_b:
-            st.metric("Margin Width", f"{2*margin:.3f}", help="2/||w||")
+            st.metric("Margin", f"{2*margin:.3f}", help="Margin width = 2/||w||")
         with col_c:
             st.metric("Support Vectors", len(clf_interactive.support_vectors_))
         with col_d:
-            accuracy = clf_interactive.score(X_interactive, y_interactive) * 100
-            st.metric("Accuracy", f"{accuracy:.1f}%")
+            # Show violations with color based on amount
+            violation_pct = (margin_violations / len(X_interactive)) * 100
+            st.metric("Margin Violations", f"{margin_violations} ({violation_pct:.0f}%)",
+                     help="Training points inside margin (have slack ξ > 0)")
+        with col_e:
+            st.metric("Train Acc", f"{train_acc:.1f}%",
+                     help="Accuracy on training data")
+        with col_f:
+            delta = test_acc_metric - train_acc
+            st.metric("Test Acc", f"{test_acc_metric:.1f}%",
+                     delta=f"{delta:+.1f}%",
+                     help="Accuracy on unseen test data - shows generalization!")
+
+        # Help explaining C parameter and support vectors
+        with st.expander("❓ Help: Understanding Metrics and Accuracy"):
+            st.markdown(f"""
+            **Current Status (C = {C_param}):**
+            - Training Accuracy: {train_acc:.1f}%
+            - Test Accuracy: {test_acc_metric:.1f}%
+            - Margin Violations: {margin_violations} out of {len(X_interactive)} training points
+
+            **Why Training Accuracy Can Be 100% Even With Overlapping Data:**
+
+            In soft-margin SVM, "accuracy" means the predicted label matches the true label:
+            - f(x) > 0 → predict +1 → if true label is +1, it's "correct"
+            - f(x) < 0 → predict -1 → if true label is -1, it's "correct"
+
+            **BUT** a point can be:
+            - ✓ Correctly classified (100% training accuracy)
+            - ✗ Inside the margin (violation, ξ > 0)
+            - ✗ Even slightly on wrong side (soft-margin allows this!)
+
+            The SVM uses **slack variables (ξ)** to handle violations:
+            - Point far from boundary: ξ = 0 (no violation)
+            - Point inside margin: 0 < ξ < 1 (violation, but correct side)
+            - Misclassified: ξ > 1 (heavy penalty from C)
+
+            **This is why you see:**
+            - Training Acc = 100% (all labels predicted correctly)
+            - Margin Violations > 0 (some points have ξ > 0)
+            - These are NOT contradictory!
+
+            **Test Accuracy is the Real Metric:**
+            - Shows how well the model generalizes to NEW data
+            - Can be lower than training accuracy (overfitting)
+            - Can be higher than training accuracy (good generalization)
+            - **Watch test accuracy change with C!**
+
+            **How C affects this:**
+            - **Small C**: More violations allowed, better test accuracy (generalization)
+            - **Large C**: Fewer violations, may overfit, worse test accuracy
+            - **Try it**: Change C with "Overlapping" dataset and watch test accuracy!
+            """)
+
+        # Show support vector analysis
+        if show_support and len(clf_interactive.support_vectors_) > 0:
+            st.markdown("---")
+            st.markdown("### 🔍 Support Vector Analysis")
+
+            # Categorize support vectors
+            sv = clf_interactive.support_vectors_
+            sv_indices = clf_interactive.support_
+            sv_labels = y_interactive[sv_indices]
+
+            sv_on_margin = 0
+            sv_inside_margin = 0
+            sv_misclassified = 0
+
+            for i, sv_point in enumerate(sv):
+                decision_value = sv_labels[i] * (w @ sv_point + b)
+                if abs(decision_value - 1.0) < 0.01:  # On margin (≈1)
+                    sv_on_margin += 1
+                elif decision_value >= 0:  # Inside margin but correct side
+                    sv_inside_margin += 1
+                else:  # Wrong side (misclassified)
+                    sv_misclassified += 1
+
+            col1, col2, col3 = st.columns(3)
+            with col1:
+                st.metric("On Margin Boundary", sv_on_margin,
+                         help="Support vectors exactly at distance 1/||w|| from boundary")
+            with col2:
+                st.metric("Inside Margin", sv_inside_margin,
+                         help="Support vectors between decision boundary and margin")
+            with col3:
+                st.metric("Misclassified", sv_misclassified,
+                         help="Support vectors on wrong side of decision boundary")
+
+            st.info(f"ℹ️ **Current C = {C_param}**: You have {sv_inside_margin + sv_misclassified} support vectors with violations (inside margin or misclassified). Decrease C to allow more violations and increase margin width, or increase C to reduce violations but accept smaller margin.")
 
 # Tab 3: Simple Numerical Example
 with tabs[3]:
