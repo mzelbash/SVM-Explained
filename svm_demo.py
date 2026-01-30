@@ -2503,8 +2503,9 @@ with tabs[7]:
 
         fig_nonlin = go.Figure()
 
+        # make_circles returns labels as 0 and 1
         mask_pos = y_circle == 1
-        mask_neg = y_circle == -1
+        mask_neg = y_circle == 0
 
         fig_nonlin.add_trace(go.Scatter(
             x=X_circle[mask_pos, 0], y=X_circle[mask_pos, 1],
@@ -2663,89 +2664,219 @@ with tabs[7]:
 
     st.subheader("Interactive: See the Difference")
 
-    col_demo1, col_demo2 = st.columns([1, 1])
+    kernel_choice = st.selectbox(
+        "Choose a kernel to see how it handles circular data",
+        ["Linear (will fail)", "RBF (will work)"],
+        key="kernel_demo"
+    )
 
-    with col_demo1:
-        kernel_choice = st.selectbox(
-            "Choose a kernel",
-            ["Linear (will fail)", "RBF (will work)"],
-            key="kernel_demo"
-        )
+    # Train SVM with selected kernel
+    if "Linear" in kernel_choice:
+        clf_demo = SVC(kernel='linear', C=1.0)
+    else:
+        clf_demo = SVC(kernel='rbf', gamma=1.0, C=1.0)
 
-        st.markdown(f"""
-        **Selected:** {kernel_choice}
-        """)
+    clf_demo.fit(X_circle, y_circle)
 
-    with col_demo2:
-        # Train SVM with selected kernel
-        if "Linear" in kernel_choice:
-            clf_demo = SVC(kernel='linear', C=1.0)
-        else:
-            clf_demo = SVC(kernel='rbf', gamma=1.0, C=1.0)
+    # Create decision boundary
+    x_min, x_max = X_circle[:, 0].min() - 0.5, X_circle[:, 0].max() + 0.5
+    y_min, y_max = X_circle[:, 1].min() - 0.5, X_circle[:, 1].max() + 0.5
+    xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200),
+                         np.linspace(y_min, y_max, 200))
 
-        clf_demo.fit(X_circle, y_circle)
+    Z = clf_demo.decision_function(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
 
-        # Create decision boundary
-        x_min, x_max = X_circle[:, 0].min() - 0.5, X_circle[:, 0].max() + 0.5
-        y_min, y_max = X_circle[:, 1].min() - 0.5, X_circle[:, 1].max() + 0.5
-        xx, yy = np.meshgrid(np.linspace(x_min, x_max, 200),
-                             np.linspace(y_min, y_max, 200))
+    accuracy = clf_demo.score(X_circle, y_circle) * 100
 
-        Z = clf_demo.decision_function(np.c_[xx.ravel(), yy.ravel()])
-        Z = Z.reshape(xx.shape)
+    # Create tabs for 2D and 3D views
+    view_tabs = st.tabs(["📊 2D View (Original Space)", "🎲 3D View (Feature Space)"])
 
+    with view_tabs[0]:
+        # 2D visualization
         fig_demo = go.Figure()
 
-        # Decision regions
+        # Decision regions with better color for two classes
         fig_demo.add_trace(go.Contour(
             x=np.linspace(x_min, x_max, 200),
             y=np.linspace(y_min, y_max, 200),
             z=Z,
-            colorscale='RdBu',
+            colorscale=[[0, 'rgba(245,101,101,0.4)'], [0.5, 'rgba(255,255,255,0.1)'],
+                       [1, 'rgba(102,126,234,0.4)']],
             showscale=False,
-            opacity=0.3,
-            contours=dict(start=-3, end=3, size=0.5)
+            contours=dict(start=-3, end=3, size=0.5),
+            hovertemplate='x₁: %{x:.2f}<br>x₂: %{y:.2f}<br>Score: %{z:.2f}<extra></extra>'
         ))
 
-        # Data points
+        # Data points - TWO DISTINCT CLASSES with better styling
         fig_demo.add_trace(go.Scatter(
             x=X_circle[mask_pos, 0], y=X_circle[mask_pos, 1],
             mode='markers',
-            marker=dict(size=8, color='#667eea'),
-            name='Class +1'
+            marker=dict(
+                size=12,
+                color='#667eea',
+                line=dict(width=2, color='#4c51bf'),
+                symbol='circle'
+            ),
+            name='Class +1 (Outer Ring)'
         ))
 
         fig_demo.add_trace(go.Scatter(
             x=X_circle[mask_neg, 0], y=X_circle[mask_neg, 1],
             mode='markers',
-            marker=dict(size=8, color='#f56565'),
-            name='Class -1'
+            marker=dict(
+                size=12,
+                color='#f56565',
+                line=dict(width=2, color='#c53030'),
+                symbol='circle'
+            ),
+            name='Class -1 (Inner Circle)'
         ))
 
-        # Decision boundary
+        # Decision boundary (f(x) = 0)
         fig_demo.add_trace(go.Contour(
             x=np.linspace(x_min, x_max, 200),
             y=np.linspace(y_min, y_max, 200),
             z=Z,
             showscale=False,
             contours=dict(start=0, end=0, coloring='lines'),
-            line=dict(color='green', width=3),
+            line=dict(color='#48bb78', width=4),
             name='Decision Boundary'
         ))
 
-        accuracy = clf_demo.score(X_circle, y_circle) * 100
-
         fig_demo.update_layout(
-            title=f"{kernel_choice} - Accuracy: {accuracy:.1f}%",
+            title=f"{kernel_choice} - 2D View | Accuracy: {accuracy:.1f}%",
             xaxis_title="x₁",
             yaxis_title="x₂",
-            height=400,
-            plot_bgcolor='#f8f9fa'
+            height=500,
+            plot_bgcolor='white',
+            showlegend=True,
+            legend=dict(x=0.02, y=0.98, bgcolor='rgba(255,255,255,0.8)')
         )
 
         st.plotly_chart(fig_demo, use_container_width=True)
 
+    with view_tabs[1]:
+        # 3D visualization - show how kernel implicitly transforms data
+        if "RBF" in kernel_choice:
+            st.markdown("""
+            ### 🎲 3D Feature Space Visualization
+
+            The RBF kernel **implicitly** maps data to an infinite-dimensional space!
+            Here we show a 3D projection where the decision boundary becomes easier to see.
+
+            The surface shows the **decision function** f(x) - notice how it creates separation between classes.
+            """)
+
+            # Create 3D surface plot
+            fig_3d = go.Figure()
+
+            # Decision function surface
+            fig_3d.add_trace(go.Surface(
+                x=np.linspace(x_min, x_max, 200),
+                y=np.linspace(y_min, y_max, 200),
+                z=Z,
+                colorscale='RdBu',
+                opacity=0.8,
+                name='Decision Function f(x)',
+                hovertemplate='x₁: %{x:.2f}<br>x₂: %{y:.2f}<br>f(x): %{z:.2f}<extra></extra>',
+                showscale=True,
+                colorbar=dict(title="f(x)", len=0.7)
+            ))
+
+            # Project data points to their f(x) values
+            Z_points_pos = clf_demo.decision_function(X_circle[mask_pos])
+            Z_points_neg = clf_demo.decision_function(X_circle[mask_neg])
+
+            # Class +1 points (blue)
+            fig_3d.add_trace(go.Scatter3d(
+                x=X_circle[mask_pos, 0],
+                y=X_circle[mask_pos, 1],
+                z=Z_points_pos,
+                mode='markers',
+                marker=dict(
+                    size=8,
+                    color='#667eea',
+                    line=dict(width=2, color='#4c51bf'),
+                    symbol='circle'
+                ),
+                name='Class +1 (Outer Ring)'
+            ))
+
+            # Class -1 points (red)
+            fig_3d.add_trace(go.Scatter3d(
+                x=X_circle[mask_neg, 0],
+                y=X_circle[mask_neg, 1],
+                z=Z_points_neg,
+                mode='markers',
+                marker=dict(
+                    size=8,
+                    color='#f56565',
+                    line=dict(width=2, color='#c53030'),
+                    symbol='circle'
+                ),
+                name='Class -1 (Inner Circle)'
+            ))
+
+            # Add decision plane at z=0
+            xx_plane, yy_plane = np.meshgrid(
+                np.linspace(x_min, x_max, 20),
+                np.linspace(y_min, y_max, 20)
+            )
+            zz_plane = np.zeros_like(xx_plane)
+
+            fig_3d.add_trace(go.Surface(
+                x=xx_plane,
+                y=yy_plane,
+                z=zz_plane,
+                opacity=0.3,
+                colorscale=[[0, '#48bb78'], [1, '#48bb78']],
+                showscale=False,
+                name='Decision Plane (f(x)=0)',
+                hoverinfo='skip'
+            ))
+
+            fig_3d.update_layout(
+                title=f"RBF Kernel - 3D Feature Space View | Accuracy: {accuracy:.1f}%",
+                scene=dict(
+                    xaxis_title="x₁",
+                    yaxis_title="x₂",
+                    zaxis_title="f(x) - Decision Function",
+                    camera=dict(eye=dict(x=1.5, y=1.5, z=1.3))
+                ),
+                height=600,
+                showlegend=True,
+                legend=dict(x=0.7, y=0.9, bgcolor='rgba(255,255,255,0.8)')
+            )
+
+            st.plotly_chart(fig_3d, use_container_width=True)
+
+            st.success("""
+            ✓ **Notice:** Points are separated by the decision plane at f(x)=0!
+            - Blue points (outer ring) are above the plane: f(x) > 0
+            - Red points (inner circle) are below the plane: f(x) < 0
+            - The RBF kernel made this separation possible!
+            """)
+
+        else:
+            st.info("""
+            ℹ️ **3D visualization is only available for RBF kernel**
+
+            Linear kernel works in the original 2D space, so there's no higher-dimensional
+            transformation to visualize.
+
+            Select "RBF (will work)" to see the 3D feature space!
+            """)
+
+    # Metrics row
+    col_m1, col_m2, col_m3 = st.columns(3)
+    with col_m1:
         st.metric("Accuracy", f"{accuracy:.1f}%")
+    with col_m2:
+        st.metric("Support Vectors", len(clf_demo.support_vectors_))
+    with col_m3:
+        kernel_name = "Linear" if "Linear" in kernel_choice else "RBF"
+        st.metric("Kernel Type", kernel_name)
 
     st.markdown("---")
 
