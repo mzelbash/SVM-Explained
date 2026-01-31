@@ -773,9 +773,8 @@ with tabs[0]:
             fig_margin_demo.add_trace(go.Scatter(
                 x=[margin_center - offset_x, margin_center + offset_x],
                 y=[margin_center - offset_y, margin_center + offset_y],
-                mode='lines+markers',
+                mode='lines',
                 line=dict(color='orange', width=6),
-                marker=dict(size=14, symbol='arrow-bar-up', color='orange'),
                 name=f'Margin = {actual_margin:.2f}',
                 hovertemplate=f'Margin width<br>{actual_margin:.2f} ⊥<extra></extra>'
             ))
