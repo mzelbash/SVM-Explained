@@ -405,7 +405,7 @@ with tabs[0]:
     In SVM, we have **three parallel hyperplanes**:
     """)
 
-    col_h1, col_h2 = st.columns([1, 1])
+    col_h1, col_h2 = st.columns([0.8, 1.2])
 
     with col_h1:
         st.markdown("""
@@ -524,10 +524,11 @@ with tabs[0]:
             title="Three Parallel Hyperplanes",
             xaxis_title="x₁",
             yaxis_title="x₂",
-            height=450,
+            width=700,
+            height=550,
             plot_bgcolor='#f8f9fa',
-            xaxis=dict(range=[-4, 4], gridcolor='lightgray', zeroline=True),
-            yaxis=dict(range=[-4, 4], gridcolor='lightgray', zeroline=True),
+            xaxis=dict(range=[-5, 5], gridcolor='lightgray', zeroline=True),
+            yaxis=dict(range=[-4, 4], gridcolor='lightgray', zeroline=True, scaleanchor='x', scaleratio=1),
             showlegend=True
         )
 
@@ -1158,7 +1159,7 @@ with tabs[2]:
     3. Watch **Margin Violations**, **Test Acc**, and the **timestamp** change!
     """)
 
-    col1, col2 = st.columns([1, 2])
+    col1, col2 = st.columns([0.7, 2.3])
 
     with col1:
         st.subheader("🎛️ Controls")
@@ -1454,9 +1455,12 @@ with tabs[2]:
             title=f"Interactive SVM | Train: {total_samples}, Test: {len(X_test)} | C = {C_param} | Test Acc = {test_acc:.1f}% | SV = {len(clf_interactive.support_vectors_)}",
             xaxis_title="Feature 1",
             yaxis_title="Feature 2",
-            height=600,
+            width=900,
+            height=650,
             showlegend=True,
-            plot_bgcolor='#f8f9fa'
+            plot_bgcolor='#f8f9fa',
+            xaxis=dict(range=[x_min, x_max]),
+            yaxis=dict(range=[y_min, y_max], scaleanchor='x', scaleratio=1)
         )
 
         st.plotly_chart(fig_interactive, use_container_width=True)
@@ -1940,10 +1944,10 @@ with tabs[4]:
             title="Constraint Visualization: Are all points in the right region?",
             xaxis_title="x₁",
             yaxis_title="x₂",
-            height=500,
+            height=600,
             plot_bgcolor='#f8f9fa',
             xaxis=dict(range=[-4, 4], gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
-            yaxis=dict(range=[-4, 4], gridcolor='lightgray', zeroline=True, zerolinecolor='black'),
+            yaxis=dict(range=[-4, 4], gridcolor='lightgray', zeroline=True, zerolinecolor='black', scaleanchor='x', scaleratio=1),
             showlegend=True
         )
 
@@ -2673,9 +2677,10 @@ with tabs[6]:
             title="Geometric Interpretation",
             xaxis_title="Feature 1",
             yaxis_title="Feature 2",
-            height=400,
+            height=500,
             plot_bgcolor='#f8f9fa',
-            showlegend=True
+            showlegend=True,
+            yaxis=dict(scaleanchor='x', scaleratio=1)
         )
 
         st.plotly_chart(fig_geom, use_container_width=True)
